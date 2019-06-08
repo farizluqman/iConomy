@@ -19,6 +19,14 @@ public class AccountUpdateEvent extends Event {
         this.amount = amount;
     }
 
+    public AccountUpdateEvent(String account, double previous, double balance, double amount, boolean async) {
+        super(async);
+        this.account = account;
+        this.previous = previous;
+        this.balance = balance;
+        this.amount = amount;
+    }
+
     public String getAccountName() {
         return this.account;
     }

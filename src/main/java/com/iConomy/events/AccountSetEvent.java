@@ -14,6 +14,12 @@ public class AccountSetEvent extends Event {
         this.balance = balance;
     }
 
+    public AccountSetEvent(String account, double balance, boolean async) {
+        super(async);
+        this.account = account;
+        this.balance = balance;
+    }
+
     public String getAccountName() {
         return this.account;
     }

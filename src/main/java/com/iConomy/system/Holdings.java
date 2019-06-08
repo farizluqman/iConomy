@@ -81,8 +81,16 @@ public class Holdings {
     }
 
     public void set(double balance) {
-        AccountSetEvent Event = new AccountSetEvent(this.name, balance);
-        iConomy.getBukkitServer().getPluginManager().callEvent(Event);
+        AccountSetEvent Event;
+        try {
+            Event = new AccountSetEvent(this.name, balance);
+            iConomy.getBukkitServer().getPluginManager().callEvent(Event);
+        } catch (Exception e) {
+            // fix to check if this function was run from a asynchronous thread
+            Event = new AccountSetEvent(this.name, balance, true);
+            iConomy.getBukkitServer().getPluginManager().callEvent(Event);
+        }
+
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -152,11 +160,20 @@ public class Holdings {
     }
 
     private void math(double amount, double balance, double ending) {
-        AccountUpdateEvent Event = new AccountUpdateEvent(this.name, balance, ending, amount);
-        iConomy.getBukkitServer().getPluginManager().callEvent(Event);
+        try {
+            AccountUpdateEvent Event = new AccountUpdateEvent(this.name, balance, ending, amount);
+            iConomy.getBukkitServer().getPluginManager().callEvent(Event);
 
-        if (!Event.isCancelled())
-            set(ending);
+            if (!Event.isCancelled())
+                set(ending);
+        } catch (Exception e) {
+            // fix to check if this function was run from a asynchronous thread
+            AccountUpdateEvent Event = new AccountUpdateEvent(this.name, balance, ending, amount, true);
+            iConomy.getBukkitServer().getPluginManager().callEvent(Event);
+
+            if (!Event.isCancelled())
+                set(ending);
+        }
     }
 
     public boolean isNegative() {
